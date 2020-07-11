@@ -13,20 +13,25 @@ from projects.models import Project
 
 class GroupViewSet(viewsets.ModelViewSet):
     """ A rest api viewset for CRUD group operations in a given project """
+
     serializer_class = GroupSerializer
     queryset = Group.objects.all()
-    authentication_classes = [TokenAuthentication, ]
-    permission_classes = [IsAuthenticated, ]
+    authentication_classes = [
+        TokenAuthentication,
+    ]
+    permission_classes = [
+        IsAuthenticated,
+    ]
 
     def get_target_project(self, **kwargs):
         """ Returns the target project for the viewset from the url kwargs """
-        project_pk = kwargs.get('project_pk', None)
+        project_pk = kwargs.get("project_pk", None)
         target_project = get_object_or_404(Project, pk=project_pk)
         return target_project
 
     def get_target_group(self, queryset, **kwargs):
         """ Returns the target group from a project-level queryset and the group pk in the url kwargs """
-        group_pk = kwargs.get('pk', None)
+        group_pk = kwargs.get("pk", None)
         target_group = get_object_or_404(queryset, pk=group_pk)
         return target_group
 
@@ -54,13 +59,15 @@ class GroupViewSet(viewsets.ModelViewSet):
 
         # Make request data mutable to save project in serializer
         data._mutable = True
-        data['project'] = target_project.id
+        data["project"] = target_project.id
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def perform_create(self, serializer):
         serializer.save()

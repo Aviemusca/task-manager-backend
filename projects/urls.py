@@ -9,5 +9,5 @@ router.register("viewset", ProjectViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("<int:project_pk>/groups/", include('groups.urls')),
+    path("<int:project_pk>/groups/", include("groups.urls")),
 ]

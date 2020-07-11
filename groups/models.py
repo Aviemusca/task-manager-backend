@@ -7,20 +7,21 @@ from projects.models import Project
 
 class Group(models.Model):
     """ A class to manage a group of tasks within a given project """
+
     title = models.CharField(max_length=100)
     description = models.TextField(default="")
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='groups')
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="groups"
+    )
     no_progress = models.BooleanField(default=True)
     in_progress = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=110, unique=True, blank=True)
 
-
     class Meta:
-        verbose_name = 'Group'
-        verbose_name_plural = 'Groups'
-
+        verbose_name = "Group"
+        verbose_name_plural = "Groups"
 
     def __str__(self):
         return self.title

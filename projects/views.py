@@ -12,6 +12,7 @@ from .models import Project
 
 class ProjectViewSet(viewsets.ModelViewSet):
     """ A rest api viewset for CRUD project operations owned by a given user """
+
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
     authentication_classes = [

@@ -9,26 +9,38 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('projects', '0002_auto_20200711_1135'),
+        ("projects", "0002_auto_20200711_1135"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Group',
+            name="Group",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100)),
-                ('description', models.TextField(default='')),
-                ('no_progress', models.BooleanField(default=True)),
-                ('in_progress', models.BooleanField(default=False)),
-                ('completed', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('slug', models.SlugField(blank=True, max_length=110, unique=True)),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='groups', to='projects.Project')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=100)),
+                ("description", models.TextField(default="")),
+                ("no_progress", models.BooleanField(default=True)),
+                ("in_progress", models.BooleanField(default=False)),
+                ("completed", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("slug", models.SlugField(blank=True, max_length=110, unique=True)),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="groups",
+                        to="projects.Project",
+                    ),
+                ),
             ],
-            options={
-                'verbose_name': 'Group',
-                'verbose_name_plural': 'Groups',
-            },
+            options={"verbose_name": "Group", "verbose_name_plural": "Groups",},
         ),
     ]
