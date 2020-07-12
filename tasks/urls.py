@@ -2,12 +2,11 @@ from django.urls import path, include
 
 from rest_framework import routers
 
-from .views import GroupViewSet
+from .views import TaskViewSet
 
 router = routers.DefaultRouter()
-router.register("viewset", GroupViewSet)
+router.register("viewset", TaskViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("<int:group_pk>/tasks/", include("tasks.urls")),
 ]
