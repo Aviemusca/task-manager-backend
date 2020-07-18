@@ -22,44 +22,45 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAuthenticated,
     ]
+    lookup_url_kwarg = "group_pk"
 
-    def get_target_project(self, **kwargs):
-        """ Returns the target project for the viewset from the url kwargs """
-        project_pk = kwargs.get("project_pk", None)
-        target_project = get_object_or_404(Project, pk=project_pk)
-        return target_project
+    def get_target_project(self, project_slug):
+        """ Returns the target project of the viewset from the url kwargs """
+        project = get_object_or_404(Project, slug=project_slug)
+        return project
 
-    def get_target_group(self, queryset, **kwargs):
-        """ Returns the target group from a project-level queryset and the group pk in the url kwargs """
-        group_pk = kwargs.get("pk", None)
-        target_group = get_object_or_404(queryset, pk=group_pk)
-        return target_group
+    def get_target_group_qs(self, project_slug):
+        """ Returns the group queryset of the target project """
+        project = self.get_target_project(project_slug)
+        queryset = Group.objects.filter(project=project)
+        return queryset
 
-    def list(self, request, **kwargs):
+    def get_target_group(self, project_slug, group_pk):
+        """ Returns the target group from a project-level queryset
+        and the group pk in the url kwargs """
+        queryset = self.get_target_group_qs(project_slug)
+        group = get_object_or_404(queryset, pk=group_pk)
+        return group
+
+    def list(self, request, project_slug=None):
         """ list (get) all groups of a given project"""
-        target_project = self.get_target_project(**kwargs)
-        queryset = Group.objects.filter(project=target_project)
+        queryset = self.get_target_group_qs(project_slug)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, **kwargs):
+    def retrieve(self, request, project_slug=None, group_pk=None):
         """ Retrieve (get) a specific group in a given project """
-        target_project = self.get_target_project(**kwargs)
-        queryset = Group.objects.filter(project=target_project)
-        target_group = self.get_target_group(queryset, **kwargs)
-        serializer = self.get_serializer(target_group)
+        group = self.get_target_group(project_slug, group_pk)
+        serializer = self.get_serializer(group)
         return Response(serializer.data)
 
-    def create(self, request, **kwargs):
+    def create(self, request, project_slug=None):
         """ Create (post) a group in a given project """
-        data = request.data
+        data = request.data.copy()
 
-        # Get the target project from url kwargs
-        target_project = self.get_target_project(**kwargs)
-
-        # Make request data mutable to save project in serializer
-        data._mutable = True
-        data["project"] = target_project.id
+        # Add the target project to the request data
+        project = self.get_target_project(project_slug)
+        data["project"] = project.id
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -72,22 +73,18 @@ class GroupViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
-    def partial_update(self, request, **kwargs):
-        """ Update (patch) a specific group in a given project """
-        target_project = self.get_target_project(**kwargs)
-        queryset = Group.objects.filter(project=target_project)
-        target_group = self.get_target_group(queryset, **kwargs)
-        serializer = self.get_serializer(target_group, data=request.data, partial=True)
+    def partial_update(self, request, project_slug=None, group_pk=None):
+        """ Partially update (patch) a group in a project """
+        group = self.get_target_group(project_slug, group_pk)
+        serializer = self.get_serializer(group, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
-    def destroy(self, request, **kwargs):
+    def destroy(self, request, project_slug=None, group_pk=None):
         """ Delete (delete) a group in a given project """
-        target_project = self.get_target_project(**kwargs)
-        queryset = Group.objects.filter(project=target_project)
-        target_group = self.get_target_group(queryset, **kwargs)
-        self.perform_destroy(target_group)
+        group = self.get_target_group(project_slug, group_pk)
+        self.perform_destroy(group)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_destroy(self, instance):

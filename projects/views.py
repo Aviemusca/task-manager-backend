@@ -21,20 +21,32 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAuthenticated,
     ]
+    lookup_field = "slug"
+    lookup_url_kwarg = "project_slug"
+
+    def get_target_project(self, request, project_slug=None):
+        """ Returns the target project for the viewset from
+        the user project qs and the url_kwarg """
+        queryset = request.user.projects.all()
+        project = get_object_or_404(queryset, slug=project_slug)
+        return project
 
     def list(self, request):
         queryset = request.user.projects.all()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        queryset = request.user.projects.all()
-        target_project = get_object_or_404(queryset, pk=pk)
-        serializer = self.get_serializer(target_project)
+    def retrieve(self, request, project_slug=None):
+        project = self.get_target_project(request, project_slug)
+        serializer = self.get_serializer(project)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = self.get_serializer(data=request.data)
+        """ Create (post) a project for a given user """
+        data = request.data.copy()
+        data["owner"] = request.user.id
+
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -43,22 +55,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
         )
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save()
 
-    def partial_update(self, request, pk=None):
-        queryset = request.user.projects.all()
-        target_project = get_object_or_404(queryset, pk=pk)
+    def partial_update(self, request, project_slug=None):
+        project = self.get_target_project(request, project_slug)
         serializer = self.get_serializer(
-            target_project, data=request.data, partial=True
+            project, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=request.user)
         return Response(serializer.data)
 
-    def destroy(self, request, pk=None):
-        queryset = request.user.projects.all()
-        target_project = get_object_or_404(queryset, pk=pk)
-        self.perform_destroy(target_project)
+    def destroy(self, request, project_slug=None):
+        project = self.get_target_project(request, project_slug)
+        self.perform_destroy(project)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_destroy(self, instance):
