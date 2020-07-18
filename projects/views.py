@@ -59,9 +59,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, project_slug=None):
         project = self.get_target_project(request, project_slug)
-        serializer = self.get_serializer(
-            project, data=request.data, partial=True
-        )
+        serializer = self.get_serializer(project, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=request.user)
         return Response(serializer.data)
