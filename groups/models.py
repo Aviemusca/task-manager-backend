@@ -5,6 +5,11 @@ from utils.slugs import unique_slugify
 from projects.models import Project
 
 
+class GroupManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().order_by("created_at")
+
+
 class Group(models.Model):
     """ A class to manage a group of tasks within a given project """
 
@@ -18,6 +23,8 @@ class Group(models.Model):
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=110, unique=True, blank=True)
+
+    objects = GroupManager()
 
     class Meta:
         verbose_name = "Group"

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework import viewsets, status
+from rest_framework import generics, viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -12,7 +12,7 @@ from groups.models import Group
 
 
 class TaskViewSet(viewsets.ModelViewSet):
-    """ A rest api viewset for CRUD group operations in a given project """
+    """ A rest api viewset for CRUD task operations in a given project task group """
 
     serializer_class = TaskSerializer
     queryset = Task.objects.all()
@@ -53,13 +53,12 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def create(self, request, **kwargs):
         """ Create (post) a task in a given group """
-        data = request.data
+        data = request.data.copy()
 
         # Get the target group from url kwargs
         target_group = self.get_target_group(**kwargs)
 
         # Make request data mutable to save group in serializer
-        data._mutable = True
         data["group"] = target_group.id
 
         serializer = self.get_serializer(data=data)

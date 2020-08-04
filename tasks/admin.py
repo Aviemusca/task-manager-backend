@@ -12,9 +12,8 @@ class TaskAdmin(admin.ModelAdmin):
         "group",
         "get_project",
         "description",
-        "no_progress",
-        "in_progress",
-        "completed",
+        "state",
+        "priority",
         "created_at",
         "slug",
     )
