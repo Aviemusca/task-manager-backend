@@ -11,6 +11,7 @@ class TaskSerializer(serializers.ModelSerializer):
     description = serializers.CharField(required=False, allow_blank=True)
     state = serializers.IntegerField(required=False)
     priority = serializers.IntegerField(required=False)
+    difficulty = serializers.IntegerField(required=False)
 
     class Meta:
         model = Task
@@ -24,5 +25,5 @@ class TaskSerializer(serializers.ModelSerializer):
             "dateCreated",
             "state",
             "priority",
+            "difficulty",
         )
-        required_fields = ("title",)

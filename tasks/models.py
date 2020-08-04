@@ -19,6 +19,7 @@ class Task(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="tasks")
     state = models.IntegerField(choices=STATES, default=0)
     priority = models.PositiveIntegerField(default=5)
+    difficulty = models.PositiveIntegerField(default=5)
     created_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=110, unique=True, blank=True)
 
