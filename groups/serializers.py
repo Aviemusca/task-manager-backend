@@ -3,6 +3,13 @@ from .models import Group
 
 
 class GroupSerializer(serializers.ModelSerializer):
+    projectSlug = serializers.CharField(source="project.slug", read_only=True)
+    dateCreated = serializers.DateTimeField(
+        source="created_at", format="%B %d, %Y", read_only=True
+    )
+    noProgress = serializers.BooleanField(source="no_progress", required=False)
+    inProgress = serializers.BooleanField(source="in_progress", required=False)
+
     class Meta:
         model = Group
         fields = (
@@ -10,9 +17,10 @@ class GroupSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "project",
-            "no_progress",
-            "in_progress",
+            "projectSlug",
+            "noProgress",
+            "inProgress",
             "completed",
-            "created_at",
+            "dateCreated",
             "slug",
         )
