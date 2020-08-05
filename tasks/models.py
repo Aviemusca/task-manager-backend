@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime, timedelta
 
 from groups.models import Group
 
@@ -21,6 +22,7 @@ class Task(models.Model):
     priority = models.PositiveIntegerField(default=5)
     difficulty = models.PositiveIntegerField(default=5)
     created_at = models.DateTimeField(auto_now_add=True)
+    deadline = models.DateTimeField(default=datetime.now() + timedelta(days=7))
     slug = models.SlugField(max_length=110, unique=True, blank=True)
 
     objects = TaskManager()

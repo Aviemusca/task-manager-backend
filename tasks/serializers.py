@@ -3,7 +3,7 @@ from .models import Task
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    projectSlug = serializers.CharField(source="project.slug", read_only=True)
+    projectSlug = serializers.CharField(source="group.project.slug", read_only=True)
     groupId = serializers.IntegerField(source="group.id", read_only=True)
     dateCreated = serializers.DateTimeField(
         source="created_at", format="%B %d, %Y", read_only=True
@@ -12,6 +12,7 @@ class TaskSerializer(serializers.ModelSerializer):
     state = serializers.IntegerField(required=False)
     priority = serializers.IntegerField(required=False)
     difficulty = serializers.IntegerField(required=False)
+    deadline = serializers.DateTimeField(format="%Y-%m-%d %H:%M", required=False)
 
     class Meta:
         model = Task
@@ -26,4 +27,5 @@ class TaskSerializer(serializers.ModelSerializer):
             "state",
             "priority",
             "difficulty",
+            "deadline",
         )
