@@ -14,7 +14,9 @@ class TaskAdmin(admin.ModelAdmin):
         "description",
         "state",
         "priority",
+        "difficulty",
         "created_at",
+        "deadline",
         "slug",
     )
 

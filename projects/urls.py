@@ -10,4 +10,5 @@ router.register("viewset", ProjectViewSet)
 urlpatterns = [
     path("", include(router.urls)),
     path("<slug:project_slug>/groups/", include("groups.urls")),
+    path("<slug:project_slug>/tasks/", include("tasks.urls"))
 ]

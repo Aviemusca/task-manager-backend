@@ -14,6 +14,7 @@ class GroupAdmin(admin.ModelAdmin):
         "no_progress",
         "in_progress",
         "completed",
+        "completion",
         "created_at",
         "slug",
     )
