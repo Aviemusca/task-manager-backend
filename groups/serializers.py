@@ -9,6 +9,7 @@ class GroupSerializer(serializers.ModelSerializer):
     )
     noProgress = serializers.BooleanField(source="no_progress", required=False)
     inProgress = serializers.BooleanField(source="in_progress", required=False)
+    completion = serializers.FloatField(required=False)
 
     class Meta:
         model = Group
@@ -21,6 +22,7 @@ class GroupSerializer(serializers.ModelSerializer):
             "noProgress",
             "inProgress",
             "completed",
+            "completion",
             "dateCreated",
             "slug",
         )

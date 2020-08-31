@@ -17,6 +17,7 @@ class Project(models.Model):
     in_progress = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    completion = models.FloatField(default=0)
     slug = models.SlugField(max_length=110, unique=True, blank=True)
 
     class Meta:
@@ -30,3 +31,16 @@ class Project(models.Model):
         slug_str = self.title
         unique_slugify(self, slug_str)
         super().save(*args, **kwargs)
+
+    def get_num_tasks(self):
+        """ Returns the total number of tasks in the project """
+        return sum([group.tasks.count() for group in self.groups.all()])
+
+    def get_completion(self):
+        """ Returns the task completion rate """
+        completed_tasks = sum([1 for group in self.groups.all() for task in group.tasks.all() if task.state == 2])
+        return round(completed_tasks/self.get_num_tasks(), 4)
+
+    def update_completion(self):
+        self.completion = self.get_completion()
+        self.save()

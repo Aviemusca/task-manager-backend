@@ -21,10 +21,24 @@ class Group(models.Model):
     no_progress = models.BooleanField(default=True)
     in_progress = models.BooleanField(default=False)
     completed = models.BooleanField(default=False)
+    completion = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=110, unique=True, blank=True)
 
     objects = GroupManager()
+
+    def get_num_tasks(self):
+        """ Returns the total number of tasks in the group """
+        return self.tasks.count()
+
+    def get_completion(self):
+        """ Returns the task completion rate """
+        completed_tasks = sum([1 for task in self.tasks.all() if task.state == 2])
+        return round(completed_tasks/self.get_num_tasks(), 4)
+
+    def update_completion(self):
+        self.completion = self.get_completion()
+        self.save()
 
     class Meta:
         verbose_name = "Group"

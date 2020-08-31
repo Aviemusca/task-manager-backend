@@ -8,10 +8,12 @@ from rest_framework.response import Response
 from .serializers import TaskSerializer
 
 from .models import Task
+from projects.models import Project
 from groups.models import Group
 
 
-class TaskViewSet(viewsets.ModelViewSet):
+
+class GroupTaskViewSet(viewsets.ModelViewSet):
     """ A rest api viewset for CRUD task operations in a given project task group """
 
     serializer_class = TaskSerializer
@@ -58,7 +60,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         # Get the target group from url kwargs
         target_group = self.get_target_group(**kwargs)
 
-        # Make request data mutable to save group in serializer
+        # save group in serializer
         data["group"] = target_group.id
 
         serializer = self.get_serializer(data=data)
@@ -92,3 +94,60 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         instance.delete()
+
+
+class ProjectTaskViewSet(viewsets.ModelViewSet):
+    """ A rest api viewset for CRUD task operations in a given project """
+
+    serializer_class = TaskSerializer
+    queryset = Task.objects.all()
+    authentication_classes = [TokenAuthentication,]
+    permission_classes = [IsAuthenticated,]
+    lookup_url_kwarg = "task_pk"
+
+    def get_target_project(self, project_slug):
+        project = get_object_or_404(Project, slug=project_slug)
+        return project
+
+    def get_target_task_qs(self, project_slug):
+        queryset = Task.objects.project(slug=project_slug)
+        return queryset
+
+    def get_target_task(self, project_slug, task_pk):
+        # Targetting the task directly from all tasks would allow
+        # retrieving tasks from other projects
+        queryset = self.get_target_task_qs(project_slug)
+        task = get_object_or_404(queryset, pk=task_pk)
+        return task
+
+    def list(self, request, project_slug):
+        """ list (get) all tasks of a project """
+        queryset = self.get_target_task_qs(project_slug)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, project_slug, task_pk):
+        """ Retrieve (get) a specific task in a project """
+        task = self.get_target_task(project_slug, task_pk)
+        serializer = self.get_serializer(task)
+        return Response(serializer.data)
+
+
+    def partial_update(self, request, project_slug, task_pk):
+        """ Update (patch) a specific task in a project """
+        task = self.get_target_task(project_slug, task_pk)
+        serializer = self.get_serializer(task, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def destroy(self, request, project_slug, task_pk):
+        """ Delete (delete) a task in a project """
+        task = self.get_target_task(project_slug, task_pk)
+        self.perform_destroy(task)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+
