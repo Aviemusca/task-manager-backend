@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework.generics import CreateAPIView
 
-# Create your views here.
+from .models import Contact
+from .serializers import ContactSerializer
+
+
+class ContactCreateView(CreateAPIView):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
