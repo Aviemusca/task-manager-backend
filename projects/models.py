@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 
@@ -7,16 +8,17 @@ from utils.slugs import unique_slugify
 
 class Project(models.Model):
     """ A class to manage overall projects, which are collections of groups of tasks """
+    STATES = ((0, "no progress"),
+            (1, "in progress"), (2, "completed"))
 
     title = models.CharField(max_length=100)
     owner = models.ForeignKey(
         get_user_model(), on_delete=models.CASCADE, related_name="projects"
     )
     description = models.TextField(default="")
-    no_progress = models.BooleanField(default=True)
-    in_progress = models.BooleanField(default=False)
-    completed = models.BooleanField(default=False)
+    state = models.IntegerField(choices=STATES, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    deadline = models.DateTimeField(default=datetime.now() + timedelta(days=7))
     completion = models.FloatField(default=0)
     slug = models.SlugField(max_length=110, unique=True, blank=True)
 

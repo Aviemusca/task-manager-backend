@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "projects.apps.ProjectsConfig",
     "groups.apps.GroupsConfig",
     "tasks.apps.TasksConfig",
+    "contacts.apps.ContactsConfig",
 ]
 
 MIDDLEWARE = [
