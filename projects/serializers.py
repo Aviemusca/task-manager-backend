@@ -4,10 +4,11 @@ from .models import Project
 
 class ProjectSerializer(serializers.ModelSerializer):
     dateCreated = serializers.DateTimeField(
-        source="created_at", format="%B %d, %Y", required=False, read_only=True
+            source="created_at", format="%Y-%m-%d %H:%M:%S", read_only=True
     )
-    noProgress = serializers.BooleanField(source="no_progress", required=False)
-    inProgress = serializers.BooleanField(source="in_progress", required=False)
+    description = serializers.CharField(required=False, allow_blank=True)
+    state = serializers.IntegerField(required=False)
+    deadline = serializers.DateTimeField(format="%Y-%m-%d %H:%M", required=False)
 
     class Meta:
         model = Project
@@ -16,9 +17,8 @@ class ProjectSerializer(serializers.ModelSerializer):
             "title",
             "owner",
             "description",
-            "noProgress",
-            "inProgress",
-            "completed",
+            "state",
             "dateCreated",
+            "deadline",
             "slug",
         )

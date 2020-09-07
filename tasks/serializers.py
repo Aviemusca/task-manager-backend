@@ -5,6 +5,7 @@ from .models import Task
 class TaskSerializer(serializers.ModelSerializer):
     projectSlug = serializers.CharField(source="group.project.slug", read_only=True)
     groupId = serializers.IntegerField(source="group.id", read_only=True)
+    groupTitle = serializers.CharField(source="group.title", read_only=True)
     dateCreated = serializers.DateTimeField(
             source="created_at", format="%Y-%m-%d %H:%M:%S", read_only=True
     )
@@ -22,6 +23,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "group",
+            "groupTitle",
             "projectSlug",
             "groupId",
             "dateCreated",
