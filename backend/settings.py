@@ -77,7 +77,7 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ.get("DB_PASS"),
@@ -121,6 +121,6 @@ STATIC_URL = "/static/"
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-CORS_ORIGIN_WHITELIST = ["tamska.herokuapp.com", "http://localhost:3000"]
+CORS_ORIGIN_WHITELIST = ["https://tamska.herokuapp.com", "http://localhost:3000"]
 
 django_heroku.settings(locals())
