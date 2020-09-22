@@ -121,6 +121,6 @@ STATIC_URL = "/static/"
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-CORS_ORIGIN_WHITELIST = ["https://tamska.herokuapp.com", "http://localhost:3000"]
+CORS_ORIGIN_WHITELIST = ["https://tamska.herokuapp.com", "http://tamska.herokuapp.com", "http://localhost:3000"]
 
 django_heroku.settings(locals())
