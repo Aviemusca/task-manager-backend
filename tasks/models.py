@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 from groups.models import Group
 
@@ -32,8 +33,8 @@ class Task(models.Model):
     archived = models.BooleanField(default=False)
     priority = models.PositiveIntegerField(default=5)
     difficulty = models.PositiveIntegerField(default=5)
-    created_at = models.DateTimeField(auto_now_add=True)
-    deadline = models.DateTimeField(default=datetime.now() + timedelta(days=7))
+    created_at = models.DateTimeField(default=timezone.now)
+    deadline = models.DateTimeField(default=timezone.now)
     slug = models.SlugField(max_length=110, unique=True, blank=True)
 
     objects = TaskManager()

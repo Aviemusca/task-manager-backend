@@ -1,9 +1,15 @@
 from django.db import models
+from django.utils import timezone
 from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 
 from utils.slugs import unique_slugify
+
+class ProjectManager(models.Manager):
+    """ Custom project model manager """
+    def get_queryset(self):
+        return super().get_queryset().order_by("created_at")
 
 
 class Project(models.Model):
@@ -17,10 +23,12 @@ class Project(models.Model):
     )
     description = models.TextField(default="")
     state = models.IntegerField(choices=STATES, default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     deadline = models.DateTimeField(default=datetime.now() + timedelta(days=7))
     completion = models.FloatField(default=0)
     slug = models.SlugField(max_length=110, unique=True, blank=True)
+
+    objects = ProjectManager()
 
     class Meta:
         verbose_name = "Project"

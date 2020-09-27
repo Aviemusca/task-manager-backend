@@ -3,9 +3,7 @@ from .models import Project
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    dateCreated = serializers.DateTimeField(
-            source="created_at", format="%Y-%m-%d %H:%M:%S", read_only=True
-    )
+    dateCreated = serializers.DateTimeField(source="created_at")
     description = serializers.CharField(required=False, allow_blank=True)
     state = serializers.IntegerField(required=False)
     deadline = serializers.DateTimeField(format="%Y-%m-%d %H:%M", required=False)
